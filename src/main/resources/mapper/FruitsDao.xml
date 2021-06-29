@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fruitsmanager.fruits.dao.FruitsDao">
+
+    <resultMap id="BaseResultMap" type="com.fruitsmanager.fruits.entity.dataBase.Fruits">
+        <!--@Table Fruits-->
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="fruitname" column="fruitName" jdbcType="VARCHAR"/>
+        <result property="stock" column="stock" jdbcType="INTEGER"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="desc" column="desc" jdbcType="VARCHAR"/>
+        <result property="userid" column="userid" jdbcType="INTEGER"/>
+        <result property="username" column="username" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="BaseResultMap">
+        select
+          id, fruitName, stock, status, fruits.desc,userid,username,create_time,update_time
+        from fruits.fruits
+        where id = #{id} and status &lt;&gt; 3
+    </select>
+
+    <!--查询单个-->
+    <select id="queryDelById" resultMap="BaseResultMap">
+        select
+          id, fruitName, stock, status, fruits.desc,userid,username,create_time,update_time
+        from fruits.fruits
+        where id = #{id} and status=3
+    </select>
+
+    <!--查询单个-->
+    <select id="queryByName" resultMap="BaseResultMap">
+        select
+          id, fruitName, stock, status, fruits.desc,userid,username,create_time,update_time
+        from fruits.fruits
+        <where>
+            <if test="username != null and username != ''">
+                and fruits.username = #{username}
+            </if>
+            and fruitName = #{fruitname} and status &lt;&gt; 3
+        </where>
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="BaseResultMap">
+        select
+          id, fruitName, stock, status, fruits.desc,userid,username,create_time,update_time
+        from fruits.fruits
+        limit #{offset}, #{limit}
+        where status &lt;&gt; 3
+    </select>
+
+
+    <!--根据条件查询指定行数据-->
+    <select id="queryAllByCondition" resultMap="BaseResultMap">
+        select
+        id, fruitName, stock, status, fruits.desc,userid,username,create_time,update_time
+        from fruits.fruits
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="fruitname != null and fruitname != ''">
+                and fruitName = #{fruitname}
+            </if>
+            <if test="stock != null">
+                and stock = #{stock}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="desc != null and desc != ''">
+                and fruits.desc = #{desc}
+            </if>
+            <if test="userid != null">
+                and status = #{status}
+            </if>
+            <if test="username != null and username != ''">
+                and fruits.username = #{username}
+            </if>
+            and status &lt;&gt; 3
+        </where>
+        limit #{offset},#{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="BaseResultMap">
+        select
+        fruits.id, fruits.fruitName, fruits.stock, fruits.status, fruits.desc,userid,username,create_time,update_time
+        from fruits.fruits
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="fruitname != null and fruitname != ''">
+                and fruitName like CONCAT('%',#{fruitname},'%')
+            </if>
+            <if test="stock != null">
+                and stock = #{stock}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="desc != null and desc != ''">
+                and fruits.desc = #{desc}
+            </if>
+            <if test="userid != null">
+                userid = #{userid}
+            </if>
+            <if test="username != null and username != ''">
+                fruits.username like CONCAT('%',#{username},'%')
+            </if>
+            <if test="create_time != null">
+                and create_time = #{create_time}
+            </if>
+            <if test="update_time != null">
+                and update_time = #{update_time}
+            </if>
+            and status &lt;&gt; 3
+        </where>
+        order by  id desc
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert"  useGeneratedKeys="true">
+        insert into fruits.fruits(fruitName, stock, status, fruits.desc,userid,username,create_time,update_time)
+        values (#{fruitname}, #{stock}, 0, #{desc},#{userid},#{username},#{create_time},#{update_time})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update fruits.fruits
+        <set>
+            <if test="fruitname != null and fruitname != ''">
+                fruitName = #{fruitname},
+            </if>
+            <if test="stock != null">
+                stock = #{stock},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="desc != null and desc != ''">
+                fruits.desc = #{desc},
+            </if>
+            <if test="userid != null">
+                userid = #{userid},
+            </if>
+            <if test="username != null and username != ''">
+                fruits.username = #{username},
+            </if>
+            <if test="create_time != null">
+                 create_time = #{create_time},
+            </if>
+            <if test="update_time != null">
+                update_time = #{update_time},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键修改状态-->
+    <update id="updateStatus">
+        update fruits.fruits
+        <set>
+            <if test="userid != null">
+                userid = #{userid},
+            </if>
+            <if test="username != null and username != ''">
+                fruits.username = #{username},
+            </if>
+            <if test="update_time != null">
+                update_time = #{update_time},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from fruits.fruits where id = #{id}
+    </delete>
+
+</mapper>

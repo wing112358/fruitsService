@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fruitsmanager.fruits.dao.UserDao">
+
+    <resultMap id="BaseResultMap" type="com.fruitsmanager.fruits.entity.dataBase.User">
+        <!--@Table User-->
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="username" column="username" jdbcType="VARCHAR"/>
+        <result property="password" column="password" jdbcType="VARCHAR"/>
+        <result property="desc" column="desc" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="BaseResultMap">
+        select
+          user.id, user.username, user.password, user.desc,user.create_time
+        from fruits.user
+        where id = #{id}
+    </select>
+
+    <!--根据name查询记录-->
+    <select id="queryByName" parameterType="String" resultMap="BaseResultMap">
+        select
+          user.id, user.username, user.password, user.desc,user.create_time
+        from fruits.user
+        where username = #{username}
+    </select>
+
+    <!--根据name以及password查询记录-->
+    <select id="queryByNameAndPassWord" parameterType="String" resultMap="BaseResultMap">
+        select
+          user.id, user.username, user.password, user.desc,user.create_time
+        from fruits.user
+        where username = #{username}and password=#{password}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="BaseResultMap">
+        select
+          user.id, user.username, user.password, user.desc,user.create_time
+        from fruits.user
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="BaseResultMap">
+        select
+        user.id, user.username, user.password, user.desc,user.create_time
+        from fruits.user
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="username != null and username != ''">
+                and username = #{username}
+            </if>
+            <if test="password != null and password != ''">
+                and password = #{password}
+            </if>
+            <if test="desc != null and desc != ''">
+                and desc = #{desc}
+            </if>
+            <if test="create_time != null and create_time != ''">
+                and create_time = #{create_time}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert"  useGeneratedKeys="true">
+        insert into fruits.user( user.username, user.password, user.desc,user.create_time)
+        values (#{username}, #{password}, #{desc},#{create_time})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update fruits.user
+        <set>
+            <if test="username != null and username != ''">
+                username = #{username},
+            </if>
+            <if test="password != null and password != ''">
+                password = #{password},
+            </if>
+            <if test="desc != null and desc != ''">
+                desc = #{desc},
+            </if>
+            <if test="create_time != null and create_time != ''">
+                and create_time = #{create_time}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from fruits.user where id = #{id}
+    </delete>
+
+</mapper>
